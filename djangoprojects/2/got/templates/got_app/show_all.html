@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 align="center">Characters from Game Of Thrones</h1>
+
+{% if char %}
+<div class="row justify-content-center">
+    <div class="col-auto">
+        <table class="table">
+            <thead>
+                <tr>
+                  <th scope="col">NAME</th>
+                  <th scope="col">HOUSE</th>
+                  <th scope="col">AGE</th>
+                  <th scope="col">STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for c in char %}
+                <tr>
+                    <td>{{c.name}}</td>
+                    <td>{{c.house_name}}</td>
+                    <td>{{c.age}}</td>
+                    <td>{{c.status}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% else %}
+    <h2>Have not characters</h2>
+{% endif %}
+
+{% endblock %}
