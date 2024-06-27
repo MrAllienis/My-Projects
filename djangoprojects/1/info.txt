@@ -1,0 +1,13 @@
+django-admin startproject project1
+python .\manage.py startapp testapp1
+python .\manage.py runserver 8000
+python .\manage.py makemigrations testapp1
+python .\manage.py migrate
+python .\manage.py createsuperuser
+
+ cd .\djangoprojects\1\project1\project1
+
+user1 wg51wa1a35w1
+user2 s2tj8d5sf6
+
+pip install django-debug-toolbar

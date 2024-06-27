@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 align="center">Our furniture item</h1>
+{% if item != None %}
+<div class="row justify-content-center">
+    <div class="col-auto">
+        <table class="table">
+            <thead>
+                <tr>
+                  <th scope="col">PRICE</th>
+                  <th scope="col">DESCRIPTION</th>
+                  <th scope="col">DATE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row"><a href={{item.link}}>{{item.price}} р.</a></th>
+                    <td>{{item.description}}</td>
+                    <td>{{item.parse_datetime}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+    <h2>Have not item</h2>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 align="center"><b>Adminka.</b> All our furniture</h1>
+
+{% if user.is_authenticated %}
+    {% if mebels %}
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <table class="table">
+                <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">LINK</th>
+                  <th scope="col">PARSE DATE</th>
+                  <th scope="col">PRICE</th>
+                  <th scope="col">DESCRIPTION</th>
+                  <th scope="col">EDITING</th>
+                  <th scope="col">DELITING</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for mebel in page_obj %}
+                <tr>
+                    <th>{{mebel.id}}</th>
+                    <td scope="row"><a href={{mebel.link}}>Direct link</a></td>
+                    <td>{{mebel.parse_datetime}}</td>
+                    <td>{{mebel.price}}</td>
+                    <td>{{mebel.description}}</td>
+                    <td>
+                        <form action="{% url 'update_item' mebel.id %}" method="post">
+                            {% csrf_token %}
+                            {{form.as_p}}
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{% url 'delete_item' mebel.id %}">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% include 'pagination.html' %}
+        </div>
+    </div>
+
+    {% else %}
+        <h2>Have not furniture</h2>
+    {% endif %}
+{% else %}
+    <p style="text-align: center">
+        <b>You are not authorized</b>
+    </p>
+
+
+{% endif %}
+
+{% endblock %}

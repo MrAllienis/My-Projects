@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 align="center">All our furniture</h1>
+
+{% if mebels %}
+<div class="row justify-content-center">
+    <div class="col-auto">
+        <table class="table">
+            <thead>
+                <tr>
+                  <th scope="col">PRICE</th>
+                  <th scope="col">DESCRIPTION</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for mebel in page_obj %}
+                <tr>
+                    <th scope="row"><a href={{mebel.link}}>{{mebel.price}} р.</a></th>
+                    <td>{{mebel.description}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% include 'pagination.html' %}
+    </div>
+</div>
+
+
+{% else %}
+    <h2>Have not furniture</h2>
+{% endif %}
+
+{% endblock %}

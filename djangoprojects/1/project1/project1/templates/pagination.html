@@ -1,0 +1,12 @@
+<div class="row justify-content-center">
+    <div class="col-auto">
+        PAGES:
+        {% for p in page_obj.paginator.page_range %}
+            {% if page_obj.number == p %}
+                {{ p }}
+            {% else %}
+                <a href="?page={{ p }}">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
