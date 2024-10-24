@@ -1,0 +1,114 @@
+{% extends 'index.html' %}
+
+
+
+
+{% block content %}
+{% load static %}
+<head>
+    <style>
+        .shop-link {
+            color: inherit;
+            text-decoration: none; /* Убираем подчеркивание */
+        }
+        .shop-link:hover {
+            color: #800080;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 600px;
+        }
+        .tab-button {
+            padding-top: 7px;
+            padding-bottom: 1px;
+            padding-left: 59px;
+            padding-right: 59px;
+            border-radius-: 10px;
+            background-color: #31404f;
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            text-align: center;
+            display: inline-block;
+            height: 40px;
+        }
+        .tab-button:hover {
+            color: white;
+            text-decoration: none;
+            background-color: #800080;
+            transition: background-color 0.3s ease;
+        }
+        .tab-button.active {
+            background-color: #1188c1;
+            color: white;
+            pointer-events: none;
+        }
+        .tab-button:first-child {
+            border-top-left-radius: 10px; /* Закругляем верхний левый угол первой кнопки */
+            border-top-right-radius: 0; /* Закругляем верхний правый угол первой кнопки */
+            border-bottom-left-radius: 10px;  /* Без закругления нижнего левого угла первой кнопки */
+            border-bottom-right-radius: 0; /* Без закругления нижнего правого угла первой кнопки */
+        }
+
+        .tab-button:last-child {
+            border-top-left-radius: 0;    /* Без закругления верхнего левого угла последней кнопки */
+            border-top-right-radius: 10px;   /* Без закругления верхнего правого угла последней кнопки */
+            border-bottom-left-radius: 0; /* Закругляем нижний левый угол последней кнопки */
+            border-bottom-right-radius: 10px; /* Закругляем нижний правый угол последней кнопки */
+        }
+    </style>
+</head>
+<div class="tab-container">
+    <a href="{% url 'sales_app:shops_products' %}" class="tab-button {% if request.path == '/shops_products' %}active{% endif %}"><b>Магазины</b></a>
+    <a href="{% url 'sales_app:all' %}" class="tab-button {% if request.path == '/all' %}active{% endif %}"><b>Товары</b></a>
+</div>
+<form method="GET" action="">
+    <div class="input-group mb-3" style="max-width: 600px; margin: 0 auto;">
+        <input type="text" class="form-control" name="search" placeholder="Поиск" value="{{ request.GET.search }}"
+               style="height: 35px; color: white; background-color: #31404f; border-radius: 10px; border: 1px solid #ccc;
+                      padding-left: 35px; background-image: url('https://thumb.cloud.mail.ru/weblink/thumb/xw1/ARC2/swQTBK3xh');
+                      background-repeat: no-repeat; background-position: 10px center; background-size: 20px 20px;">
+    </div>
+</form>
+{% if shops %}
+<div class="row justify-content-center">
+    <div class="col-auto">
+        <table class="table">
+            <tbody style="background-color: #17212b; color: white; display: block; width: 100%; margin: 0 auto;">
+
+            {% for shop in shops %}
+                <tr>
+                    {% if shop.image != 'NaN' and shop.image != None %}
+                        <th style="border: none; margin-right: 100px; vertical-align: middle; max-width: 65px; padding: 5px" scope="row"><a href="{% url 'sales_app:category_view' shop.shop_id %}"><img src="{{shop.image}}" alt="Загрузка изображения..." loading="lazy" style="text-align: center;  width: 40px; height: 40px; background-color: #f0f0f0; border-radius: 10px; object-fit: contain;"></a></th>
+                    {% else %}
+                        <th style="border: none; margin-right: 100px; vertical-align: middle; max-width: 65px; padding: 5px" scope="row"><a href="{% url 'sales_app:category_view' shop.shop_id %}"><img src="https://thumb.cloud.mail.ru/weblink/thumb/xw1/vHdv/EqMJZCkLY" alt="Изображение отсутствует" loading="lazy" style="text-align: center; width: 40px; height: 40px; background-color: #f0f0f0; border-radius: 10px; object-fit: contain;"></a></th>
+                    {% endif %}
+                    <th scope="row" style="border: none; padding-left: 10px; font-size: 17px; vertical-align: middle; text-align: left; width: 350px ">
+                        <a href="{% url 'sales_app:category_view' shop.shop_id %}" class="shop-link">{{shop.name}}</a>
+                        <div style=" font-size: 12px; color: #A9A9A9; text-align: left;">
+                            {% for category in shop.category.all %}
+                                {% if forloop.counter <= 1 %}
+                                    {{ category.name }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </th>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% else %}
+    <h2 style="text-align: center">Магазины не найдены</h2>
+{% endif %}
+
+{% endblock %}

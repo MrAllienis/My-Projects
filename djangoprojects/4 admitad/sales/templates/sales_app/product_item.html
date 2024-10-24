@@ -1,0 +1,99 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% load static %}
+<head>
+    <style>
+        .shop-link {
+            color: inherit;
+            text-decoration: none; /* Убираем подчеркивание */
+        }
+        .shop-link:hover {
+            color: #800080;
+            text-decoration: none;
+        }
+        .shop-linkblack {
+            color: #000000;
+            text-decoration: none; /* Убираем подчеркивание */
+            background-color: #F5DEB3
+        }
+        .shop-linkblack:hover {
+            color: #f9f9f9;
+            text-decoration: none;
+            background-color: #CD853F
+        }
+        .show-more {
+            color: #808080;
+            cursor: pointer;
+        }
+        .show-more:hover {
+            color: #800080;
+            text-decoration: underline;
+        }
+        .description {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .rounded-box {
+            display: inline-block; /* Размер по содержимому */
+            padding: 10px 10px; /* Отступы внутри рамки */
+            border: 2px solid #000000; /* Цвет и ширина границы */
+            border-radius: 20px; /* Закругление углов */
+            background-color: #F5DEB3; /* Цвет фона внутри рамки */
+            color: #333; /* Цвет текста */
+            text-align: center; /* Центрирование текста */
+            font-size: 18px; /* Размер шрифта */
+            font-family: Arial, sans-serif; /* Шрифт текста */
+        }
+        .price {
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: underline;
+    white-space: nowrap; /* Запрещает перенос строки внутри элемента */
+    }
+
+    .old-price {
+        font-size: 25px;
+        white-space: nowrap; /* Запрещает перенос строки внутри элемента */
+    }
+    .price-container {
+        display: flex;
+        justify-content: space-between; /* Распределяет элементы по краям контейнера */
+        align-items: center; /* Вертикальное центрирование элементов */
+        max-width: 550px; /* Максимальная ширина контейнера */
+        margin: 0 auto; /* Центрирование контейнера по горизонтали */
+    }
+    </style>
+</head>
+
+{% if product %}
+<div class="row justify-content-center">
+    <div class="col-auto" style="padding-top: 10px">
+        {% if product.image != 'NaN' %}
+            <p style="text-align: center; vertical-align: middle; text-align: center;"><img src="{{product.image}}" alt="Загрузка изображения..." style="text-align: center; max-width: 500px; max-height: 500px; border-radius: 10px;"></p>
+        {% else %}
+            <p style="text-align: center; vertical-align: middle; text-align: center;"><img src="{% static 'images/no-image-large.jpg' %}" alt="Изображение отсутствует" style="text-align: center; max-width: 500px; max-height: 500px; border-radius: 10px;"></p>
+        {% endif %}
+        <p style="font-size: 27px; font-weight: bold; max-width: 550px; word-wrap: break-word; overflow: hidden;">{{product.name}}</p>
+        <div class="price-container">
+            <p class="price">{{product.price}} RUB</p>
+            {% if product.old_price %}
+                <p class="old-price"><s>{{product.old_price}}</s></p>
+            {% endif %}
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin: 20px 0;">
+            <p style="width: 100%; max-width: 400px; margin: 0; padding: 10px; border-radius: 50px; background-color: #007bff; text-align: center;">
+                <a href="{{product.url}}" style="display: block; font-size: 20px; font-weight: bold; color: white; text-decoration: none;">
+                    Посмотреть на сайте магазина
+                </a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+{% else %}
+    <h2>Товар не найден</h2>
+{% endif %}
+
+{% endblock %}

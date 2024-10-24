@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-image: url('https://www.ultraimagehub.com/wallpapers/tr:flp-false,gx-0.3,gy-0.8,q-75,rh-3264,rw-5824,th-1080,tw-1920/1242081078819422248.jpeg'); /* Ссылка на фоновое изображение */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    /*height: 100vh;*/
+    color: #fff;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Полупрозрачное затемнение для фона */
+    z-index: -1;
+}
+
+.container {
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+.shop-carousel {
+    overflow: hidden;  /* скрываем все элементы, которые не попадают в видимую область */
+    width: 100%;
+}
+
+.carousel-wrapper {
+    width: 100%;
+    position: relative;
+}
+
+.carousel {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    will-change: transform;
+}
+
+.carousel-item {
+    flex: 0 0 20%;  /* Каждый элемент занимает 20% ширины, то есть 5 элементов помещаются в карусель */
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.carousel-item img {
+    width: 150px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+header {
+    margin-bottom: 40px;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+p {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+}
+
+.benefits, .telegram {
+    margin-bottom: 50px;
+    margin-top: 20px;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+ul {
+    list-style-type: none;
+    font-size: 1.2rem;
+    line-height: 1.8;
+}
+
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.button {
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.telegram-btn {
+    background: #0088cc;
+}
+
+.telegram-btn:hover {
+    background: #005f99;
+}
+
+@media (min-width: 768px) {
+    .buttons {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .button {
+        width: 45%;
+    }
+
+    .category-item {
+        width: 30%;
+    }
+}
+
+@media (max-width: 768px) {
+    .category-item {
+        width: 100%;
+    }
+}
+
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скидки и Промокоды</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="overlay"></div> <!-- Затемнение для фона -->
+    <div class="container">
+        <header>
+            <h1>Добро пожаловать на сайт Скидок и Промокодов!</h1>
+            <p>Получайте лучшие скидки, акции и промокоды на товары по выгодным ценам каждый день!</p>
+        </header>
+
+        <section class="benefits">
+            <h2>Почему выбирают нас?</h2>
+            <ul>
+                <li><em>Актуальные промокоды и скидки каждый день</em></li>
+                <li>Товары из самых популярных интернет-магазинов</li>
+                <li>Большой каталог товаров из 200+ магазинов</li>
+            </ul>
+        </section>
+
+        <!-- Секция с каруселью магазинов -->
+        <section class="shop-carousel">
+            <h2>С нами уже сотрудничают:</h2>
+            <div class="carousel-wrapper">
+                <div class="carousel">
+                    {% for shop in shops %}
+                        {% if shop.image %}
+                            <div class="carousel-item">
+                                <img src="{{ shop.image }}">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="telegram">
+            <h2>Присоединяйтесь к нам!</h2>
+            <div class="buttons">
+                <a href="https://t.me/products186_bot" target="_blank" class="button telegram-btn">Купоны и промокоды</a>
+                <a href="https://t.me/coupons186_bot" target="_blank" class="button telegram-btn">Каталог товаров</a>
+            </div>
+        </section>
+    </div>
+<script>
+        let carousel = document.querySelector('.carousel');
+        let items = document.querySelectorAll('.carousel-item');
+        let currentPosition = 0;
+        let itemWidth = items[0].offsetWidth; // Ширина одного элемента
+        let totalItems = items.length;
+        let visibleItems = 5; // Сразу видим 5 элементов
+        let isScrolling = true;
+
+        // Клонируем первые 5 элементов для плавной бесконечной прокрутки
+        for (let i = 0; i < visibleItems; i++) {
+            let clone = items[i].cloneNode(true);
+            carousel.appendChild(clone);  // Клонируем и добавляем в конец
+        }
+
+        function startCarousel() {
+            currentPosition += visibleItems;  // Прокручиваем сразу на 5 элементов
+            carousel.style.transition = 'transform 3s ease-in-out';
+            carousel.style.transform = `translateX(-${currentPosition * itemWidth}px)`;
+
+            // Когда доходим до конца списка, возвращаемся в начало
+            if (currentPosition >= totalItems) {
+                setTimeout(() => {
+                    carousel.style.transition = 'none';
+                    carousel.style.transform = 'translateX(0)';
+                    currentPosition = 0;
+                }, 3000);  // Задержка совпадает с временем анимации
+            }
+        }
+
+        // Автоматическая прокрутка каждые 3 секунды
+        setInterval(startCarousel, 5000);
+
+        // Обновляем ширину элемента при изменении размеров окна
+        window.addEventListener('resize', () => {
+            itemWidth = items[0].offsetWidth;  // Обновляем ширину элементов при изменении окна
+        });
+    </script>
+</body>
+</html>

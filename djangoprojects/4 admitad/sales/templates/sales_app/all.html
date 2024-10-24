@@ -1,0 +1,185 @@
+{% extends 'index.html' %}
+
+
+
+
+{% block content %}
+{% load static %}
+<head>
+    <style>
+        .shop-link {
+            color: inherit;
+            text-decoration: none; /* Убираем подчеркивание */
+        }
+        .shop-link:hover {
+            color: #800080;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 600px;
+        }
+        .tab-button {
+            padding-top: 7px;
+            padding-bottom: 1px;
+            padding-left: 59px;
+            padding-right: 59px;
+            border-radius-: 10px;
+            background-color: #31404f;
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            text-align: center;
+            display: inline-block;
+            height: 40px;
+        }
+        .tab-button:hover {
+            color: white;
+            text-decoration: none;
+            background-color: #800080;
+            transition: background-color 0.3s ease;
+        }
+        .tab-button.active {
+            background-color: #1188c1;
+            color: white;
+            pointer-events: none;
+        }
+        .tab-button:first-child {
+            border-top-left-radius: 10px; /* Закругляем верхний левый угол первой кнопки */
+            border-top-right-radius: 0; /* Закругляем верхний правый угол первой кнопки */
+            border-bottom-left-radius: 10px;  /* Без закругления нижнего левого угла первой кнопки */
+            border-bottom-right-radius: 0; /* Без закругления нижнего правого угла первой кнопки */
+        }
+
+        .tab-button:last-child {
+            border-top-left-radius: 0;    /* Без закругления верхнего левого угла последней кнопки */
+            border-top-right-radius: 10px;   /* Без закругления верхнего правого угла последней кнопки */
+            border-bottom-left-radius: 0; /* Закругляем нижний левый угол последней кнопки */
+            border-bottom-right-radius: 10px; /* Закругляем нижний правый угол последней кнопки */
+        }
+        .dropdown-item.active {
+            font-weight: bold; /* Например, сделать текст жирным */
+            background-color: #1188c1; /* Светлый фон */
+            color: white; /* Цвет текста */
+        }
+
+    </style>
+</head>
+<div class="tab-container">
+        <a href="{% url 'sales_app:shops_products' %}" class="tab-button {% if request.path == '/shops_products' %}active{% endif %}"><b>Магазины</b></a>
+        <a href="{% url 'sales_app:all' %}" class="tab-button {% if request.path == '/all' %}active{% endif %}"><b>Товары</b></a>
+</div>
+<form method="GET" action="">
+    <div class="input-group mb-3" style="max-width: 600px; margin: 0 auto;">
+        <input type="text" class="form-control" name="search" placeholder="Поиск" value="{{ request.GET.search }}"
+               style="height: 35px; color: white; background-color: #31404f; border-radius: 10px; border: 1px solid #ccc;
+                      padding-left: 35px; background-image: url('https://thumb.cloud.mail.ru/weblink/thumb/xw1/ARC2/swQTBK3xh');
+                      background-repeat: no-repeat; background-position: 10px center; background-size: 20px 20px;">
+    </div>
+</form>
+<div class="dropdown" style="text-align: center; max-width: 600px; margin: 0 auto; margin-bottom: 15px">
+    <button class="btn btn-secondary dropdown-toggle d-flex align-items-center justify-content-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%; font-size: 20px; background-color: ghostwhite; color: black; border-radius: 10px; padding: 4px">
+        <!-- Изображение рядом с текстом -->
+        <img src="https://cdn.iconscout.com/icon/free/png-256/free-filter-1634626-1389150.png" style="width: 25px; height: 25px; margin-right: 8px;">
+        Фильтры
+    </button>
+    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
+        <li><a class="dropdown-item {% if request.GET.sort == '-sale' %}active{% endif %}" href="?{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}&sort=-sale">Большие скидки</a></li>
+        <li><a class="dropdown-item {% if request.GET.sort == 'price' %}active{% endif %}" href="?{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}&sort=price">Дешевле</a></li>
+        <li><a class="dropdown-item {% if request.GET.sort == '-price' %}active{% endif %}" href="?{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}&sort=-price">Дороже</a></li>
+    </ul>
+</div>
+
+
+
+
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        {% for product in page_obj %}
+            <div class="col-6 col-md-4 d-flex justify-content-center mb-2" style="max-width: 185px; padding: 0; padding-bottom: 10px"> <!-- Уменьшено расстояние между строками -->
+                <div class="card" style="background-color: #17212b; color: white; width: 175px; margin: 1px;"> <!-- Уменьшено расстояние между колонками -->
+                    {% if product.image != 'NaN' and product.image != None %}
+                        <img src="{{ product.image }}" alt="Загрузка изображения..." loading="lazy" class="card-img-top" style="width: 175px; height: 250px; object-fit: contain; border-radius: 10px; padding: 5px; background-color: white;"> <!-- Уменьшены внутренние отступы -->
+                    {% else %}
+                        <img src="{% static 'images/no-image-large.jpg' %}" loading="lazy" alt="Изображение отсутствует" class="card-img-top" style="width: 175px; height: 250px; object-fit: contain; border-radius: 10px; padding: 5px; background-color: white;"> <!-- Уменьшены внутренние отступы -->
+                    {% endif %}
+                    <div class="card-body text-leftr" style=" padding: 5px"> <!-- Уменьшены внутренние отступы -->
+                        {% if product.sale != 0 %}
+                            <div style="width: 100%;"><span style="font-size: 15px; font-weight: bold; text-decoration: none; color: #ff418b">{{ product.price }} ₽</span> <span style="font-weight: normal; font-size: 13px; color: white"><s>{{ product.old_price }}</s> ₽</span>
+                                <span style="font-size: 15px; font-weight: bold; text-decoration: none; color: #ff418b">-{{ product.sale }}%</span>
+                            </div>
+                        {% else %}
+                            <div style="width: 100%;"><span style="font-size: 15px; color: aqua; font-weight: bold; text-decoration: none;">{{ product.price }} ₽</span></div>
+                        {% endif %}
+                        <div style="font-size: 13px; font-weight: bold; width: 100%">{{ product.name|truncatechars:50 }}</div>
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin: 0;">
+                        <p style="width: 100%; max-width: 400px; margin: 0; padding: 5px; border-radius: 50px; background-color: #1188c1; text-align: center;">
+                            <a href="{{product.url}}" style="display: block; font-size: 15px; font-weight: bold; color: white; text-decoration: none;">
+                                Посмотреть
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% if forloop.counter|divisibleby:2 and not forloop.last %}
+                </div><div class="row justify-content-center">
+            {% endif %}
+        {% endfor %}
+    </div>
+
+
+    <div class="d-flex justify-content-center" style="width: 100%;">
+        <nav aria-label="Page navigation">
+            <ul class="pagination d-flex align-items-center">
+                <!-- Кнопка "Назад" -->
+                <li class="page-item me-2"> <!-- Добавим отступ справа -->
+                    {% if has_previous %}
+                        <a class="page-link" style="font-size: 22px; border-radius: 50px; padding-top: 0; padding-bottom: 3px; background-color: #1188c1; color: white;" href="?page={{ has_previous }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if order %}&sort={{ order }}{% endif %}" aria-label="Previous">
+                            <span aria-hidden="true"><</span>
+                        </a>
+                    {% else %}
+                        <span style="display: none;">
+                            <span aria-hidden="true"><</span>
+                        </span>
+                    {% endif %}
+                </li>
+
+                <!-- Текущая страница -->
+                <li class="page-item mx-2"> <!-- Добавим отступы по бокам -->
+                    <span class="page-link" style="background-color: white; color: black; border-radius: 50px">
+                        Страница {{ number }}
+                    </span>
+                </li>
+
+                <!-- Кнопка "Вперед" -->
+                <li class="page-item ms-2"> <!-- Добавим отступ слева -->
+                    {% if has_next %}
+                        <a class="page-link" style="background-color: #1188c1; color: white; font-size: 22px; border-radius: 50px; padding-top: 0; padding-bottom: 3px" href="?page={{ has_next }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if order %}&sort={{ order }}{% endif %}" aria-label="Next">
+                            <span aria-hidden="true">></span>
+                        </a>
+                    {% else %}
+                        <span style="display: none;">
+                            <span aria-hidden="true">></span>
+                        </span>
+                    {% endif %}
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+
+</div>
+
+
+
+
+
+{% endblock %}

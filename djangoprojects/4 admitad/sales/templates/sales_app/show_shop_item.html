@@ -1,0 +1,308 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% load static %}
+<head>
+
+<div id="notification" style="position: fixed; bottom: 20px; right: 20px; display: none; padding: 10px 20px; background-color: #007bff; color: white; border-radius: 5px; font-size: 16px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
+    Промокод скопирован: <span id="notification-text"></span>
+</div>
+
+    <style>
+        .button_back{
+            opacity: 0.4;
+        }
+        .button_back:hover{
+            opacity: 1;
+        }
+        .shop-link {
+            color: inherit;
+            text-decoration: none; /* Убираем подчеркивание */
+        }
+        .shop-link:hover {
+            color: #2375c2;
+            text-decoration: none;
+        }
+        .shop-linkblack {
+            color: white;
+            text-decoration: none; /* Убираем подчеркивание */
+            background-color: #1188c1
+        }
+        .shop-linkblack:hover {
+            color: white;
+            text-decoration: none;
+            background-color: #8d5dc1;
+        }
+        .show-more {
+            color: #45c3ff;
+            cursor: pointer;
+        }
+        .show-more:hover {
+            color: #1160ff;
+            text-decoration: underline;
+        }
+        .description {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .rounded-box {
+            padding: 10px 10px; /* Отступы внутри рамки */
+            border-radius: 15px; /* Закругление углов */
+            background-color: #5c6774; /* Цвет фона внутри рамки */
+            color: white; /* Цвет текста */
+            text-align: left; /* Центрирование текста */
+            font-size: 18px; /* Размер шрифта */
+            font-family: Arial, sans-serif; /* Шрифт текста */
+            max-height: 90px;
+            margin-bottom: 5px;
+        }
+        .parent-block {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0px;
+        }
+
+        .left-block {
+            flex-grow: 1;
+            margin-right: 5px; /* Отступ между блоками */
+            max-height: 42px
+        }
+
+        .right-block {
+            max-width: 90px;
+            max-height: 42px/* Фиксированная ширина правого блока */
+        }
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        #notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* Чтобы уведомление было поверх других элементов */
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+    </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+{% if shop %}
+<div class="row justify-content-center">
+    <div class="col-auto">
+        <table class="table">
+            <tbody style="background-color: #17212b; color: white; display: block; width: 100%; margin: 0 auto;">
+                <tr>
+                    {% if shop.image != 'NaN' and shop.image != None %}
+                        <th scope="row" style="max-width: 65px; border: none; vertical-align: middle; text-align: left;"><img src="{{shop.image}}" alt="Загрузка изображения..." style="max-width: 50px; max-height: 50px; border-radius: 10px;"></th>
+                    {% else %}
+                        <th scope="row" style="max-width: 65px; border: none; vertical-align: middle; text-align: left;"><img src="https://thumb.cloud.mail.ru/weblink/thumb/xw1/vHdv/EqMJZCkLY" alt="Изображение отсутствует" style="max-width: 100px; max-height: 100px; border-radius: 20px;"></th>
+                    {% endif %}
+                    <th scope="row" style="border: none; font-size: 17px; vertical-align: middle; text-align: left;">{{shop.name}}</a></th>
+                </tr>
+            </tbody>
+        </table>
+        <div style="font-size: 15px; font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
+            {% if shop.description %}
+                <span id="description-{{ shop.shop_id }}" class="description">
+                    {{ shop.description|truncatechars:100 }}
+                </span>
+                {% if shop.description|length > 100 %}
+                    <a href="javascript:void(0);" id="show-more-{{ shop.shop_id }}" class="show-more" onclick="toggleDescription('{{ shop.shop_id }}', '{{ shop.description|escapejs }}');">
+                        Подробнее...
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div style="max-width: 600px; margin: 0 auto;">
+            {% if coupons %}
+                {% for coupon in coupons %}
+                        {% if coupon.name|first == '1' %}
+                            {% if coupon.discount and coupon.discount not in coupon.name  %}
+                                <div style="font-size: 17px;  padding: 15px; border-radius: 30px; background-color: #383f4c; max-width: 500px; margin: 10px auto;">
+                                    <p style="padding-left: 5px"><img src="https://thumb.cloud.mail.ru/weblink/thumb/xw1/Jxtr/QmwZw5QWf" style="padding-bottom: 4px; padding-right: 2px; width: 13%; height: 13%; background-color: transparent;">{{coupon.name|slice:"1:"|truncatechars:200 }} Скидка {{coupon.discount}}<br>
+                            {% else %}
+                                <div style="font-size: 17px;  padding: 15px; border-radius: 30px; background-color: #383f4c; max-width: 500px; margin: 10px auto;">
+                                    <p style="padding-left: 5px"><img src="https://thumb.cloud.mail.ru/weblink/thumb/xw1/Jxtr/QmwZw5QWf" style="padding-bottom: 4px; padding-right: 2px; width: 13%; height: 13%; background-color: transparent;">{{coupon.name|slice:"1:"|truncatechars:200 }}<br>
+                            {% endif %}
+                        {% elif coupon.name|first == '2' %}
+                            {% if coupon.discount and coupon.discount not in coupon.name  %}
+                                <div style="font-size: 17px;  padding: 15px; border-radius: 30px; background-color: #383f4c; max-width: 500px; margin: 10px auto;">
+                                    <p style="padding-left: 5px"><img src="https://thumb.cloud.mail.ru/weblink/thumb/xw1/4a1i/H3sMFUz1H" style="padding-bottom: 5px; width: 10%; height: 10%; background-color: transparent;">{{coupon.name|slice:"1:"|truncatechars:200 }} Скидка {{coupon.discount}}<br>
+                            {% else %}
+                                <div style="font-size: 17px;  padding: 15px; border-radius: 30px; background-color: #383f4c; max-width: 500px; margin: 10px auto;">
+                                    <p style="padding-left: 5px"><img src="https://thumb.cloud.mail.ru/weblink/thumb/xw1/4a1i/H3sMFUz1H" style="padding-bottom: 5px; width: 10%; height: 10%; background-color: transparent;">{{coupon.name|slice:"1:"|truncatechars:200 }}<br>
+                            {% endif %}
+                        {% elif coupon.name|first == '3' %}
+                            {% if coupon.discount and coupon.discount not in coupon.name  %}
+                                <div style="font-size: 17px;  padding: 15px; border-radius: 30px; background-color: #383f4c; max-width: 500px; margin: 10px auto;">
+                                    <p style="padding-left: 5px"><img src="https://thumb.cloud.mail.ru/weblink/thumb/xw1/gTMA/snQyKLP6a" style="padding-bottom: 7px; padding-right: 2px; width: 5%; height: 5%; background-color: transparent;">{{coupon.name|slice:"1:"|truncatechars:200 }} Скидка {{coupon.discount}}<br>
+                            {% else %}
+                                <div style="font-size: 17px;  padding: 15px; border-radius: 30px; background-color: #383f4c; max-width: 500px; margin: 10px auto;">
+                                    <p style="padding-left: 5px"><img src="https://thumb.cloud.mail.ru/weblink/thumb/xw1/gTMA/snQyKLP6a" style="padding-bottom: 7px; padding-right: 2px; width: 5%; height: 5%; background-color: transparent;">{{coupon.name|slice:"1:"|truncatechars:200 }}<br>
+                            {% endif %}
+                        {% endif %}
+                        {% if coupon.condition and shop.shop_id != 25179 %}
+                            <a href="javascript:void(0);" id="show-more-{{ coupon.coupon_id }}" class="show-more" style="text-decoration: none; font-size: 18px" onclick="toggleDescription2('{{ coupon.coupon_id }}', '{{ coupon.condition|escapejs }}');">
+                                <b>Условие</b>
+                            </a>
+                            <div id="description-{{ coupon.id }}" style="display: none; padding-left: 5px">
+                                {{ coupon.condition }}
+                            </div>
+
+                        {% endif %}
+                        {% if coupon.code and coupon.code != 'НЕ НУЖЕН' and coupon.code != 'NOT REQUIRED' and coupon.code != 'NOT REQUIRE'%}
+                            <div class="parent-block">
+                                <div class="left-block">
+                                    <p class="rounded-box" style="display: compact; font-size: 14px">Промокод: <span id="coupon-code" style="font-size: 15px; font-weight: bold;">{{ coupon.code }}</span></p>
+                                </div>
+                                <div class="right-block" >
+                                    <button
+                                        style="font-size: 20px; background-color: #5c6774; color: white; border: none; border-radius: 15px; cursor: pointer; width: 50px; height: 42px;"
+                                        onclick="copyToClipboard('{{ coupon.code }}')">
+                                        <img src="https://thumb.cloud.mail.ru/weblink/thumb/xw1/g7Nr/hziHmpgtJ" style="width: 35px; height: 35px; object-fit: cover; background-color: transparent;">
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if coupon.end_start %}
+                            <p style="padding: 5px; font-size: 13px; text-align: center; margin: 0">Действует до {{coupon.end_start}}</p>
+                        {% endif %}
+                        {% if coupon.code and coupon.code != 'НЕ НУЖЕН' and coupon.code != 'NOT REQUIRED' and coupon.code != 'NOT REQUIRE' %}
+
+                            <th>
+                                <a href="{{ coupon.link }}" class="shop-linkblack"
+                                   style="display: block; padding: 10px; border-radius: 20px; text-align: center; font-size: 17px; font-weight: bold; margin: 10px auto; transition: background-color 0.3s ease;"
+                                   onclick="copyCodeAndRedirect(event, '{{ coupon.code }}')">
+                                   Скопировать и перейти на сайт
+                                </a>
+                            </th>
+                        {% else %}
+                            <th>
+                                <a href="{{ coupon.link }}" class="shop-linkblack"
+                                   style="display: block; padding: 10px; border-radius: 20px; text-align: center; font-size: 17px; font-weight: bold; margin: 10px auto; transition: background-color 0.3s ease;"
+                                   onclick="redirectToSite(event)">
+                                   Нажимай и переходи на сайт
+                                </a>
+                            </th>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h2 style="text-align: center; font-size: 15px">У данного магазина пока что нет промокодов</h2>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+<script>
+    function toggleDescription(shopId, fullDescription) {
+    var descriptionElement = document.getElementById('description-' + shopId);
+    var showMoreLink = document.getElementById('show-more-' + shopId);
+
+    // Update the description to the full text
+    descriptionElement.textContent = fullDescription;
+
+    // Hide the "Подробнее" link
+    showMoreLink.style.display = 'none';
+}
+    function toggleDescription2(couponId, condition) {
+    var element = document.getElementById('description-' + couponId);
+    if (!element) {
+        // Создаем элемент, если он еще не существует
+        element = document.createElement('div');
+        element.id = 'description-' + couponId;
+        element.style.display = 'block';
+        element.innerHTML = condition;
+        document.getElementById('show-more-' + couponId).insertAdjacentElement('afterend', element);
+    } else {
+        // Если элемент существует, переключаем его видимость
+        if (element.style.display === 'none') {
+            element.style.display = 'block';
+            element.innerHTML = condition; // Обновляем текст условия
+        } else {
+            element.style.display = 'none';
+        }
+    }
+}
+    function copyCodeAndRedirect(event, code) {
+    // Предотвращаем переход по ссылке сразу
+    event.preventDefault();
+
+    // Используем безопасный API для копирования текста
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(function() {
+            console.log('Промокод скопирован успешно.');
+            // Открываем ссылку в текущей вкладке после успешного копирования
+            window.location.href = event.target.href;
+        }).catch(function(err) {
+            console.error('Не удалось скопировать промокод: ', err);
+        });
+    } else {
+        console.error('API буфера обмена недоступен');
+    }
+}
+
+    function redirectToSite(event) {
+        // Открываем ссылку в текущей вкладке
+        window.location.href = event.target.href;
+    }
+
+    function copyToClipboard(text) {
+    // Создаем временный элемент
+    var tempInput = document.createElement("input");
+    tempInput.value = text;
+
+    // Добавляем его на страницу и выделяем текст
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    tempInput.setSelectionRange(0, 99999); // Для мобильных устройств
+
+    // Копируем текст в буфер обмена
+    document.execCommand("copy");
+
+    // Удаляем временный элемент
+    document.body.removeChild(tempInput);
+
+    // Показываем уведомление с текстом промокода
+    showNotification(text);
+}
+
+    function showNotification(text) {
+        var notification = document.getElementById('notification');
+        var notificationText = document.getElementById('notification-text');
+        notificationText.textContent = text; // Устанавливаем текст уведомления
+        notification.style.display = 'block';
+        notification.style.opacity = '1';
+
+        // Скрываем уведомление через 2 секунды с плавным исчезанием
+        setTimeout(function() {
+            notification.style.opacity = '0';
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 500); // Соответствует времени анимации исчезания
+        }, 2000); // Время отображения уведомления
+    }
+
+
+
+
+</script>
+{% else %}
+    <h2>Нет данных о магазине</h2>
+{% endif %}
+
+{% endblock %}

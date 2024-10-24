@@ -1,0 +1,165 @@
+{% extends 'index.html' %}
+
+
+
+
+{% block content %}
+{% load static %}
+<head>
+    <style>
+        .dropdown-item.active {
+            font-weight: bold; /* Например, сделать текст жирным */
+            background-color: #1188c1; /* Светлый фон */
+            color: white; /* Цвет текста */
+        }
+    </style>
+</head>
+{% if shop %}
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <table class="table">
+                <tbody style="background-color: #17212b; color: white; display: block; width: 100%; margin: 0 auto;">
+                    <tr>
+                        {% if shop.image != 'NaN' and shop.image != None %}
+                            <th scope="row" style="max-width: 65px; border: none; vertical-align: middle; text-align: left;"><img src="{{shop.image}}" alt="Загрузка изображения..." style="max-width: 50px; max-height: 50px; border-radius: 10px;"></th>
+                        {% else %}
+                            <th scope="row" style="max-width: 65px; border: none; vertical-align: middle; text-align: left;"><img src="https://thumb.cloud.mail.ru/weblink/thumb/xw1/vHdv/EqMJZCkLY" alt="Изображение отсутствует" style="max-width: 100px; max-height: 100px; border-radius: 20px;"></th>
+                        {% endif %}
+                        <th scope="row" style="border: none; font-size: 17px; vertical-align: middle; text-align: left;">{{shop.name}}</a></th>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="font-size: 15px; font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
+                {% if shop.description %}
+                    <span id="description-{{ shop.shop_id }}" class="description">
+                        {{ shop.description|truncatechars:100 }}
+                    </span>
+                    {% if shop.description|length > 100 %}
+                        <a href="javascript:void(0);" id="show-more-{{ shop.shop_id }}" class="show-more" onclick="toggleDescription('{{ shop.shop_id }}', '{{ shop.description|escapejs }}');">
+                            Подробнее...
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <form method="GET" action="">
+        <div class="input-group mb-3" style="max-width: 600px; margin: 0 auto; margin-top: 10px">
+            <input type="text" class="form-control" name="search" placeholder="Поиск" value="{{ request.GET.search }}"
+                   style="height: 35px; color: white; background-color: #31404f; border-radius: 10px; border: 1px solid #ccc;
+                          padding-left: 35px; background-image: url('https://thumb.cloud.mail.ru/weblink/thumb/xw1/ARC2/swQTBK3xh');
+                          background-repeat: no-repeat; background-position: 10px center; background-size: 20px 20px;">
+        </div>
+    </form>
+    <div class="dropdown" style="text-align: center; max-width: 600px; margin: 0 auto; margin-bottom: 15px">
+        <button class="btn btn-secondary dropdown-toggle d-flex align-items-center justify-content-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%; font-size: 20px; background-color: ghostwhite; color: black; border-radius: 10px; padding: 4px">
+            <!-- Изображение рядом с текстом -->
+            <img src="https://cdn.iconscout.com/icon/free/png-256/free-filter-1634626-1389150.png" style="width: 25px; height: 25px; margin-right: 8px;">
+            Фильтры
+        </button>
+        <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item {% if request.GET.sort == '-sale' %}active{% endif %}" href="?{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}&sort=-sale">Большие скидки</a></li>
+            <li><a class="dropdown-item {% if request.GET.sort == 'price' %}active{% endif %}" href="?{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}&sort=price">Дешевле</a></li>
+            <li><a class="dropdown-item {% if request.GET.sort == '-price' %}active{% endif %}" href="?{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}&sort=-price">Дороже</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            {% for product in page_obj %}
+                <div class="col-6 col-md-4 d-flex justify-content-center mb-2" style="max-width: 185px; padding: 0; padding-bottom: 10px"> <!-- Уменьшено расстояние между строками -->
+                    <div class="card" style="background-color: #17212b; color: white; width: 175px; margin: 1px; height: 400px"> <!-- Уменьшено расстояние между колонками -->
+                        {% if product.image != 'NaN' and product.image != None %}
+                            <img src="{{ product.image }}" alt="Загрузка изображения..." loading="lazy" class="card-img-top" style="width: 175px; height: 250px; object-fit: contain; border-radius: 10px; padding: 0; background-color: white;"> <!-- Уменьшены внутренние отступы -->
+                        {% else %}
+                            <img src="{% static 'images/no-image-large.jpg' %}" alt="Изображение отсутствует" loading="lazy" class="card-img-top" style="width: 250px; height: 175px; object-fit: contain; border-radius: 10px; padding: 0; background-color: white;"> <!-- Уменьшены внутренние отступы -->
+                        {% endif %}
+                        <div class="card-body text-leftr" style=" padding: 5px"> <!-- Уменьшены внутренние отступы -->
+                            {% if product.sale %}
+                                <div style="width: 100%;"><span style="font-size: 12px; font-weight: bold; text-decoration: none; color: #ff418b">{{ product.price }} ₽</span> <span style="font-weight: normal; font-size: 10px; color: white"><s>{{ product.old_price }}</s> ₽</span>
+                                    <span style="font-size: 10px; font-weight: bold; text-decoration: none; color: #ff418b">-{{ product.sale }}%</span>
+                                </div>
+                            {% else %}
+                                <div style="width: 100%;"><span style="font-size: 12px; color: aqua; font-weight: bold; text-decoration: none;">{{ product.price }} ₽</span></div>
+                            {% endif %}
+                            <div style="font-size: 12px; font-weight: bold; width: 100%">{{ product.name|truncatechars:45 }}</div>
+                        </div>
+                        <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin: 0;">
+                            <p style="width: 100%; max-width: 400px; margin: 0; padding: 3px; border-radius: 50px; background-color: #1188c1; text-align: center;">
+                                <a href="{{product.url}}" style="display: block; font-size: 12px; font-weight: bold; color: white; text-decoration: none;">
+                                    Посмотреть
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:2 and not forloop.last %}
+                    </div><div class="row justify-content-center">
+                {% endif %}
+            {% endfor %}
+        </div>
+
+
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <!-- Кнопка "Назад" -->
+                    {% if has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ has_previous }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if order %}&sort={{ order }}{% endif %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </span>
+                        </li>
+                    {% endif %}
+
+                    <!-- Текущая страница -->
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Страница {{ number }}
+                        </span>
+                    </li>
+
+                    <!-- Кнопка "Вперед" -->
+                    {% if has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ has_next }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if order %}&sort={{ order }}{% endif %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+{% else %}
+    <h2>Нет данных о магазине</h2>
+{% endif %}
+<script>
+    function toggleDescription(shopId, fullDescription) {
+    var descriptionElement = document.getElementById('description-' + shopId);
+    var showMoreLink = document.getElementById('show-more-' + shopId);
+
+    // Update the description to the full text
+    descriptionElement.textContent = fullDescription;
+
+    // Hide the "Подробнее" link
+    showMoreLink.style.display = 'none';
+}
+
+</script>
+
+
+{% endblock %}
