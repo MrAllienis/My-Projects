@@ -1,0 +1,23 @@
+pip install django
+pip install djangorestframework
+pip install django-rest-swagger
+pip install django-debug-toolbar
+pip install drf-yasg
+pip install -U drf-yasg
+pip install -U drf-yasg[validation]
+pip install django-filter
+pip install django-debug-toolbar
+
+
+django-admin startproject todo_project
+python .\manage.py startapp tasks
+python manage.py runserver 8000
+python manage.py makemigrations tasks
+python manage.py migrate
+python manage.py createsuperuser
+
+cd ./"my freelance"/10/todo/todo_project
+
+admin 12345
+user1 gwg5e1g351a
+user11 6d6r9f8f5

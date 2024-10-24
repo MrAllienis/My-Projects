@@ -1,0 +1,78 @@
+<!-- tasks/task_form.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <h1 class="text-center mb-4">
+            {% if form.instance.id %}
+                Редактировать задачу
+            {% else %}
+                Добавить задачу
+            {% endif %}
+        </h1>
+
+        <form method="post" class="bg-light p-4 rounded shadow-sm">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                {{ form.title }}
+                {{ form.title.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                {{ form.description }}
+                {{ form.description.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                {{ form.category }}
+                {{ form.category.errors }}
+            </div>
+
+            <div class="form-group form-check">
+                <input type="checkbox" name="completed" class="form-check-input" id="{{ form.completed.id_for_label }}" {% if form.completed.value %}checked{% endif %}>
+                <label class="form-check-label" for="{{ form.completed.id_for_label }}">{{ form.completed.label }}</label>
+                {{ form.completed.errors }}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Сохранить</button>
+        </form>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'task_list' %}" class="btn btn-secondary">Назад к списку задач</a>
+        </div>
+    </div>
+</div>
+
+<!-- Подключение дополнительных стилей -->
+<style>
+    h1 {
+        font-size: 2rem;
+        color: #007bff;
+    }
+    .btn {
+        padding: 10px 20px;
+        font-size: 1.1rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    form {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .btn-block {
+        width: 100%;
+    }
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+    }
+</style>
+{% endblock %}
